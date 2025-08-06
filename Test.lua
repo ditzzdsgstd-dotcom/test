@@ -1,71 +1,49 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
 local Window = Rayfield:CreateWindow({
-   Name = "YoxanXHub | Base Teleport V1",
-   LoadingTitle = "YoxanXHub",
-   LoadingSubtitle = "Teleport Bypass Module",
-})
-local Tab = Window:CreateTab("Base Tools", nil)
-local Section = Tab:CreateSection("Teleport Logic")
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
-
-local function tpTo(part)
-   if not part or not part:IsA("BasePart") then return end
-   local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-   local root = char:WaitForChild("HumanoidRootPart")
-   root.CFrame = part.CFrame + Vector3.new(0, 3, 0)
-end
-
-local function forwardStep(distance)
-   local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-   local root = char:WaitForChild("HumanoidRootPart")
-   local look = root.CFrame.lookVector * distance
-   local goal = root.CFrame.Position + look
-   local tween = TweenService:Create(root, TweenInfo.new(0.3), {CFrame = CFrame.new(goal)})
-   tween:Play()
-end
-
-local function detectBasePrompt()
-   for _,v in pairs(workspace:GetDescendants()) do
-       if v:IsA("ProximityPrompt") and v.ObjectText == "Steal Base" then
-           return v
-       end
-   end
-end
-
-local function attemptTeleportBypass()
-   local tries = 0
-   repeat
-       forwardStep(5)
-       tries += 1
-       task.wait(0.15)
-   until detectBasePrompt() or tries > 20
-   local prompt = detectBasePrompt()
-   if prompt then
-       Rayfield:Notify({Title="YoxanXHub", Content="✅ Prompt Found! Teleport Success", Duration=4})
-   else
-       Rayfield:Notify({Title="YoxanXHub", Content="❌ Prompt Not Found! Base locked or out of range", Duration=4})
-   end
-end
-
-Tab:CreateButton({
-   Name = "🔁 Manual Step Forward",
-   Callback = function()
-       forwardStep(5)
-   end
+	Name = "YoxanXHub | TP Bypass V1.0",
+	LoadingTitle = "Teleport Handler",
+	LoadingSubtitle = "Please wait...",
+	ConfigurationSaving = {
+		Enabled = false,
+	},
 })
 
-Tab:CreateButton({
-   Name = "🚀 Auto Bypass Forward",
-   Callback = function()
-       attemptTeleportBypass()
-   end
+local MainTab = Window:CreateTab("TP Bypass", 4483362458)
+MainTab:CreateParagraph({Title = "Base Entry Tool", Content = "Use this feature to phase into locked bases."})
+
+local function clearAntiTP()
+	local char = game.Players.LocalPlayer.Character
+	if not char then return end
+	for _, obj in ipairs(char:GetDescendants()) do
+		if obj:IsA("BodyGyro") or obj:IsA("BodyVelocity") or obj:IsA("AlignPosition") or obj:IsA("BodyPosition") then
+			obj:Destroy()
+		end
+	end
+end
+
+local function tpForwardStep()
+	local player = game.Players.LocalPlayer
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if hrp then
+		clearAntiTP()
+		local direction = hrp.CFrame.LookVector
+		hrp.CFrame = hrp.CFrame + direction * 5 -- move forward by 5 studs
+	end
+end
+
+MainTab:CreateButton({
+	Name = "TP Forward Bypass (Click Multiple Times)",
+	Callback = function()
+		for i = 1, 10 do
+			tpForwardStep()
+			task.wait(0.05)
+		end
+	end,
 })
 
-Tab:CreateParagraph({
-   Title = "Info",
-   Content = "Use this to reach locked bases. Auto bypass will stop once it detects a proximity prompt."
+MainTab:CreateParagraph({
+	Title = "⚠️ Notice",
+	Content = "Stand in front of a locked base and press the button 3–10 times. Try spamming if it doesn’t work the first time."
 })
