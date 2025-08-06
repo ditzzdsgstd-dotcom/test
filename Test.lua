@@ -1,38 +1,51 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-	Name = "YoxanXHub | Base TP V2.0",
-	LoadingTitle = "YoxanXHub Loader",
-	LoadingSubtitle = "Bypass Locked Base",
+	Name = "YoxanXHub | Base Bypass V2.1",
+	LoadingTitle = "Bypass Locked Base",
+	LoadingSubtitle = "Anti-Death Teleport",
 	ConfigurationSaving = {Enabled = false},
 	Discord = {Enabled = false},
 	KeySystem = false,
 })
 
-local MainTab = Window:CreateTab("Base Bypass", 4483362458)
-MainTab:CreateSection("Teleport Into Locked Base")
+local MainTab = Window:CreateTab("Teleport", 4483362458)
+MainTab:CreateSection("Enter Locked Bases")
 
 MainTab:CreateButton({
-	Name = "⚡ TP Forward into Locked Base",
+	Name = "⚡ GodMode + TP Forward",
 	Callback = function()
-		local function tpForward()
-			local player = game.Players.LocalPlayer
-			local char = player.Character or player.CharacterAdded:Wait()
-			local root = char:WaitForChild("HumanoidRootPart")
+		local player = game.Players.LocalPlayer
+		local char = player.Character or player.CharacterAdded:Wait()
+		local root = char:WaitForChild("HumanoidRootPart")
+		local humanoid = char:FindFirstChildOfClass("Humanoid")
 
-			for i = 1, 50 do -- 50 steps forward
-				root.CFrame = root.CFrame + (root.CFrame.LookVector * 2)
-				task.wait(0.05)
-			end
+		-- GOD MODE
+		if humanoid then
+			humanoid.Name = "YoxanXGod"
+			local clone = humanoid:Clone()
+			clone.Name = "Humanoid"
+			clone.Parent = char
+			wait()
+			char:FindFirstChild("YoxanXGod"):Destroy()
 		end
 
-		tpForward()
+		-- TELEPORT FORWARD
+		for i = 1, 50 do
+			root.CFrame = root.CFrame + (root.CFrame.LookVector * 2)
+			task.wait(0.05)
+		end
+
+		Rayfield:Notify({
+			Title = "TP Completed",
+			Content = "If you’re still alive, God Mode worked.",
+			Duration = 5,
+			Image = 4483362458,
+		})
 	end,
 })
 
-Rayfield:Notify({
-	Title = "YoxanXHub | V2.0",
-	Content = "Ready to bypass locked bases using TP Forward!",
-	Duration = 6.5,
-	Image = 4483362458,
+MainTab:CreateParagraph({
+	Title = "⚠️ Note",
+	Content = "If this still kills you, the base might be using server-side anti-TP or death walls. Try facing the right direction before clicking.",
 })
